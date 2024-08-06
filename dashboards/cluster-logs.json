@@ -1,0 +1,332 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clusterclickhouse"
+      },
+      "gridPos": {
+        "h": 32,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "targets": [
+        {
+          "builderOptions": {
+            "columns": [
+              {
+                "alias": "Timestamp",
+                "hint": "time",
+                "name": "Timestamp",
+                "type": "DateTime64(9)"
+              },
+              {
+                "alias": "SeverityText",
+                "hint": "log_level",
+                "name": "SeverityText",
+                "type": "LowCardinality(String)"
+              },
+              {
+                "alias": "Body",
+                "hint": "log_message",
+                "name": "Body",
+                "type": "String"
+              }
+            ],
+            "database": "otel",
+            "filters": [
+              {
+                "condition": "AND",
+                "filterType": "custom",
+                "hint": "time",
+                "key": "",
+                "operator": "WITH IN DASHBOARD TIME RANGE",
+                "type": "datetime"
+              },
+              {
+                "condition": "AND",
+                "filterType": "custom",
+                "hint": "log_level",
+                "key": "",
+                "operator": "IS ANYTHING",
+                "type": "string"
+              },
+              {
+                "condition": "AND",
+                "filterType": "custom",
+                "key": "LogAttributes",
+                "label": "LogAttributes",
+                "mapKey": "log.file.path",
+                "operator": "IN",
+                "type": "Map(LowCardinality(String), String)",
+                "value": [
+                  "${file:sqlstring}"
+                ]
+              }
+            ],
+            "limit": 200,
+            "meta": {
+              "logMessageLike": "",
+              "otelEnabled": false,
+              "otelVersion": "latest"
+            },
+            "mode": "list",
+            "orderBy": [
+              {
+                "default": true,
+                "dir": "DESC",
+                "hint": "time",
+                "name": ""
+              }
+            ],
+            "queryType": "logs",
+            "table": "otel_logs"
+          },
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clusterclickhouse"
+          },
+          "editorType": "sql",
+          "format": 2,
+          "meta": {
+            "builderOptions": {
+              "columns": [
+                {
+                  "alias": "Timestamp",
+                  "hint": "time",
+                  "name": "Timestamp",
+                  "type": "DateTime64(9)"
+                },
+                {
+                  "alias": "SeverityText",
+                  "hint": "log_level",
+                  "name": "SeverityText",
+                  "type": "LowCardinality(String)"
+                },
+                {
+                  "alias": "Body",
+                  "hint": "log_message",
+                  "name": "Body",
+                  "type": "String"
+                }
+              ],
+              "database": "otel",
+              "filters": [
+                {
+                  "condition": "AND",
+                  "filterType": "custom",
+                  "hint": "time",
+                  "key": "",
+                  "operator": "WITH IN DASHBOARD TIME RANGE",
+                  "type": "datetime"
+                },
+                {
+                  "condition": "AND",
+                  "filterType": "custom",
+                  "hint": "log_level",
+                  "key": "",
+                  "operator": "IS ANYTHING",
+                  "type": "string"
+                },
+                {
+                  "condition": "AND",
+                  "filterType": "custom",
+                  "key": "LogAttributes",
+                  "label": "LogAttributes",
+                  "mapKey": "log.file.path",
+                  "operator": "IN",
+                  "type": "Map(LowCardinality(String), String)",
+                  "value": [
+                    "${file:sqlstring}"
+                  ]
+                }
+              ],
+              "limit": 200,
+              "meta": {
+                "logMessageLike": "",
+                "otelEnabled": false,
+                "otelVersion": "latest"
+              },
+              "mode": "list",
+              "orderBy": [
+                {
+                  "default": true,
+                  "dir": "DESC",
+                  "hint": "time",
+                  "name": ""
+                }
+              ],
+              "queryType": "logs",
+              "table": "otel_logs"
+            }
+          },
+          "pluginVersion": "4.3.1",
+          "queryType": "logs",
+          "rawSql": "SELECT Timestamp as \"timestamp\", Body as \"body\", SeverityText as \"level\", ResourceAttributes, ScopeName FROM \"otel\".\"otel_logs\" WHERE ( timestamp >= $__fromTime AND timestamp <= $__toTime ) AND ( LogAttributes['log.file.path'] IN (${file:sqlstring}) ) ORDER BY timestamp DESC LIMIT 2000",
+          "refId": "A"
+        }
+      ],
+      "title": "All Logs",
+      "type": "logs"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": "*",
+        "current": {
+          "selected": true,
+          "text": [
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_69445633-8cfc-4fbf-94cb-28c963ecf14c/clickhouse/0.log",
+            "/var/log/pods/kube-system_cluster-autoscaler-aws-cluster-autoscaler-7d4645987d-q5kmb_d0a455d3-6da0-43f7-9f9d-ba0604429997/aws-cluster-autoscaler/0.log",
+            "/var/log/pods/argocd_argocd-repo-server-6bd467f98c-lbcdq_cb0a0883-44f5-4cf2-84f3-29bf2d5a21e8/repo-server/0.log",
+            "/var/log/pods/argocd_argocd-notifications-controller-75746cc44-ddj24_60889e02-5bf9-4bbc-9635-cc72ba6b761f/notifications-controller/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/csi-snapshotter/0.log",
+            "/var/log/pods/argocd_argocd-application-controller-0_a8f04188-2a35-47a4-a8de-37416f7fc1e5/application-controller/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/csi-provisioner/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/ebs-plugin/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/csi-attacher/0.log",
+            "/var/log/pods/kube-system_ebs-csi-node-8t4fg_109fc94d-1d1f-416a-9836-993fa3dd9325/ebs-plugin/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_81b35817-0f77-43ea-96a4-ff65ef4df184/clickhouse/0.log",
+            "/var/log/pods/kube-system_kube-proxy-2j4bg_bffba2cd-68b2-4ab5-a4d4-ad5dbfe8983c/kube-proxy/0.log",
+            "/var/log/pods/argocd_argocd-redis-699df994cb-fzm2h_8d385b34-151f-4bfe-97fe-b2ca9b9c55a6/redis/0.log",
+            "/var/log/pods/argocd_argocd-applicationset-controller-67878b78c8-d7xjm_fcc8033f-6476-4654-90fc-f94b5f180cce/applicationset-controller/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/ebs-plugin/0.log",
+            "/var/log/pods/kube-system_coredns-5b8cc885bc-jmrdl_4a557086-f79c-4ce7-b202-7db333339f1d/coredns/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-provisioner/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-attacher/0.log",
+            "/var/log/pods/argocd_argocd-server-7d88d5ddb5-84rbf_04fff2a7-cec9-4fb5-9a03-7e99e72ce49c/server/0.log",
+            "/var/log/pods/kube-system_altinity-operator-altinity-clickhouse-operator-5c69658845-glw8j_b1ae9965-bb91-40b5-b34f-81299bb181a1/altinity-clickhouse-operator/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-resizer/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-snapshotter/0.log",
+            "/var/log/pods/kube-system_altinity-operator-altinity-clickhouse-operator-5c69658845-glw8j_b1ae9965-bb91-40b5-b34f-81299bb181a1/metrics-exporter/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/liveness-probe/0.log",
+            "/var/log/pods/argocd_argocd-dex-server-6b7f87db8f-wm4w6_aa8b6425-239b-45dd-b322-f23417f6be12/dex-server/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-d8885648f-dvpdf_96b9feb3-d468-4f60-96d8-2871b54092e7/grafana/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_4df1e519-9f18-42ad-b7a3-8ea6857d430a/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_bd048e71-92ba-4840-828b-99c82c0cffb5/clickhouse/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-b97c89c9b-gp4qg_235afef7-1edb-4aa1-ad39-89fba1e3c4d7/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-847447d4b6-kjwg8_fc0ad7f6-b0d7-49e6-84e2-1c93b573948d/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-d8885648f-f7h4p_947c372f-b432-463b-ad29-bc2e292bcb8d/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-ddb97b6c8-fljs2_61ace967-3d37-4fad-a5e8-8b07e0a3077d/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-d8885648f-t44vw_2053263e-9371-4c8e-a0b0-e3a72dd4b629/grafana/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_53028649-7b5d-4a55-b5c2-831789c912c2/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/1.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/2.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/3.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/1.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/2.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/3.log"
+          ],
+          "value": [
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_69445633-8cfc-4fbf-94cb-28c963ecf14c/clickhouse/0.log",
+            "/var/log/pods/kube-system_cluster-autoscaler-aws-cluster-autoscaler-7d4645987d-q5kmb_d0a455d3-6da0-43f7-9f9d-ba0604429997/aws-cluster-autoscaler/0.log",
+            "/var/log/pods/argocd_argocd-repo-server-6bd467f98c-lbcdq_cb0a0883-44f5-4cf2-84f3-29bf2d5a21e8/repo-server/0.log",
+            "/var/log/pods/argocd_argocd-notifications-controller-75746cc44-ddj24_60889e02-5bf9-4bbc-9635-cc72ba6b761f/notifications-controller/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/csi-snapshotter/0.log",
+            "/var/log/pods/argocd_argocd-application-controller-0_a8f04188-2a35-47a4-a8de-37416f7fc1e5/application-controller/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/csi-provisioner/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/ebs-plugin/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-sswwl_095fbed3-a1d1-4e60-8505-3d5dedff4283/csi-attacher/0.log",
+            "/var/log/pods/kube-system_ebs-csi-node-8t4fg_109fc94d-1d1f-416a-9836-993fa3dd9325/ebs-plugin/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_81b35817-0f77-43ea-96a4-ff65ef4df184/clickhouse/0.log",
+            "/var/log/pods/kube-system_kube-proxy-2j4bg_bffba2cd-68b2-4ab5-a4d4-ad5dbfe8983c/kube-proxy/0.log",
+            "/var/log/pods/argocd_argocd-redis-699df994cb-fzm2h_8d385b34-151f-4bfe-97fe-b2ca9b9c55a6/redis/0.log",
+            "/var/log/pods/argocd_argocd-applicationset-controller-67878b78c8-d7xjm_fcc8033f-6476-4654-90fc-f94b5f180cce/applicationset-controller/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/ebs-plugin/0.log",
+            "/var/log/pods/kube-system_coredns-5b8cc885bc-jmrdl_4a557086-f79c-4ce7-b202-7db333339f1d/coredns/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-provisioner/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-attacher/0.log",
+            "/var/log/pods/argocd_argocd-server-7d88d5ddb5-84rbf_04fff2a7-cec9-4fb5-9a03-7e99e72ce49c/server/0.log",
+            "/var/log/pods/kube-system_altinity-operator-altinity-clickhouse-operator-5c69658845-glw8j_b1ae9965-bb91-40b5-b34f-81299bb181a1/altinity-clickhouse-operator/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-resizer/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/csi-snapshotter/0.log",
+            "/var/log/pods/kube-system_altinity-operator-altinity-clickhouse-operator-5c69658845-glw8j_b1ae9965-bb91-40b5-b34f-81299bb181a1/metrics-exporter/0.log",
+            "/var/log/pods/kube-system_ebs-csi-controller-7c7cf589dc-frv6j_08afb17c-d80b-49dc-bb19-186e1f9a83fa/liveness-probe/0.log",
+            "/var/log/pods/argocd_argocd-dex-server-6b7f87db8f-wm4w6_aa8b6425-239b-45dd-b322-f23417f6be12/dex-server/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-d8885648f-dvpdf_96b9feb3-d468-4f60-96d8-2871b54092e7/grafana/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_4df1e519-9f18-42ad-b7a3-8ea6857d430a/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_bd048e71-92ba-4840-828b-99c82c0cffb5/clickhouse/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-b97c89c9b-gp4qg_235afef7-1edb-4aa1-ad39-89fba1e3c4d7/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-847447d4b6-kjwg8_fc0ad7f6-b0d7-49e6-84e2-1c93b573948d/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-d8885648f-f7h4p_947c372f-b432-463b-ad29-bc2e292bcb8d/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-ddb97b6c8-fljs2_61ace967-3d37-4fad-a5e8-8b07e0a3077d/grafana/0.log",
+            "/var/log/pods/monitoring_monitoring-grafana-d8885648f-t44vw_2053263e-9371-4c8e-a0b0-e3a72dd4b629/grafana/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_53028649-7b5d-4a55-b5c2-831789c912c2/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/1.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/2.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_61fe276c-609d-49d0-ab66-ba85cc424224/clickhouse/3.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/0.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/1.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/2.log",
+            "/var/log/pods/monitoring_chi-monitoringdb-monitoring-0-0-0_1663981a-792f-4b1e-bf54-0160166cee22/clickhouse/3.log"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "clusterclickhouse"
+        },
+        "definition": "SELECT DISTINCT Replace(LogAttributes['log.file.path'], '/', '\\/') AS __value FROM otel.otel_logs",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "file",
+        "options": [],
+        "query": "SELECT DISTINCT Replace(LogAttributes['log.file.path'], '/', '\\/') AS __value FROM otel.otel_logs",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Cluster Logs",
+  "uid": "edtybyol8s7b4d",
+  "version": 3,
+  "weekStart": ""
+}
