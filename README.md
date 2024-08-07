@@ -19,7 +19,7 @@ helm install cluster-logs-demo . --namespace=demo --create-namespace
 Connect to Grafana:
 
 ```
-kubectl port-forward -n monitoring services/monitoring-grafana 3000:80
+kubectl port-forward -n demo services/monitoring-grafana 3000:80
 ```
 
 You can then load Grafana in your browser at `http://localhost:3000` — there is no username or password.
